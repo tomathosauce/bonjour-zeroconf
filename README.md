@@ -18,44 +18,65 @@ Discover devices and services on your local network using native Bonjour (iOS) a
 - 📱 **Managing iOS permissions** - no need for extra libraries or custom code, just use `requestLocalNetworkPermission` or `useLocalNetworkPermission` before scanning!
 - 🔄 **Real-time updates** – listen to scan results, state changes, and errors
 - 🔭 **Multiple scanners** – run several independent scanners simultaneously for different service types
-- 🧩 **Expo compatible** - (config plugin coming soon)
+- 🧩 **Expo compatible** – includes a config plugin for development builds
 
 ## 📦 Installation
 
 ```sh
-npm install @dawidzawada/bonjour-zeroconf react-native-nitro-modules
+npm install https://github.com/tomathosauce/bonjour-zeroconf.git react-native-nitro-modules
 ```
 
 > **Note:** `react-native-nitro-modules` is required as a peer dependency.
 
-## ⚙️ iOS Setup
+## 🧑‍🚀 Expo setup
 
-On iOS we need to ask for permissions and configure services we want to scan.
+This package contains native Swift and Kotlin code, so it cannot run in the
+precompiled Expo Go app. Use an Expo development build (your own build of the
+Expo client) instead.
 
-### Expo:
-
-Add this to your `app.json`, `app.config.json` or `app.config.js`:
-
-```ts
-{
-  ios: {
-    infoPlist: {
-      NSLocalNetworkUsageDescription:
-        'This app needs local network access to discover devices',
-      NSBonjourServices: ['_bonjour._tcp', '_lnp._tcp.'],
-    },
-  },
-}
-// Add service types you want to scan to NSBonjourServices, first two service types are needed for permissions
-```
-
-Run prebuild command:
+Install the native module and a development client:
 
 ```sh
-npx expo prebuild
+npm install https://github.com/tomathosauce/bonjour-zeroconf.git
+npx expo install react-native-nitro-modules expo-dev-client
 ```
 
-### React Native:
+Add the plugin to `app.json`, `app.config.json`, or `app.config.js`. List every
+Bonjour service type your app scans for:
+
+```json
+{
+  "expo": {
+    "plugins": [
+      [
+        "@dawidzawada/bonjour-zeroconf",
+        {
+          "bonjourServices": ["_http._tcp", "_printer._tcp"],
+          "localNetworkUsageDescription": "Allow this app to discover devices on your local network."
+        }
+      ]
+    ]
+  }
+}
+```
+
+The plugin preserves existing `NSBonjourServices` values and automatically adds
+the two internal service types used by `requestLocalNetworkPermission()`.
+
+Create and run the native development build:
+
+```sh
+npx expo run:ios
+# or
+npx expo run:android
+```
+
+Rebuild after changing native dependencies or plugin options. EAS Build can be
+used instead of a local native build.
+
+## ⚙️ Bare React Native iOS setup
+
+On iOS, configure the permission message and every service type you scan for.
 
 Add this to your `Info.plist`:
 
@@ -76,6 +97,7 @@ Add this to your `Info.plist`:
 ```tsx
 import {
   Scanner,
+  requestLocalNetworkPermission,
   useIsScanning,
   type ScanResult,
 } from '@dawidzawada/bonjour-zeroconf';
@@ -102,7 +124,7 @@ function App() {
   useEffect(() => {
     // Listen for discovered devices
     const { remove } = Scanner.listenForScanResults((scan) => {
-      setResults(scan);
+      setDevices(scan);
     });
 
     return () => {

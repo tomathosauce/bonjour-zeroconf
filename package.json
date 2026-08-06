@@ -10,9 +10,12 @@
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
+    "./app.plugin.js": "./app.plugin.js",
     "./package.json": "./package.json"
   },
   "files": [
+    "app.plugin.js",
+    "plugin/index.js",
     "src",
     "lib",
     "android",
@@ -66,14 +69,14 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dawidzawada/bonjour-zeroconf.git"
+    "url": "git+https://github.com/tomathosauce/bonjour-zeroconf.git"
   },
   "author": "Dawid Zawada <dawidzaw7@gmail.com> (https://github.com/dawidzawada)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/dawidzawada/bonjour-zeroconf/issues"
+    "url": "https://github.com/tomathosauce/bonjour-zeroconf/issues"
   },
-  "homepage": "https://github.com/dawidzawada/bonjour-zeroconf#readme",
+  "homepage": "https://github.com/tomathosauce/bonjour-zeroconf#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
     "access": "public"
@@ -106,9 +109,15 @@
     "typescript": "^5.9.2"
   },
   "peerDependencies": {
+    "expo": "*",
     "react": "*",
     "react-native": "*",
     "react-native-nitro-modules": ">=0.35.0"
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
   },
   "workspaces": [
     "example"
